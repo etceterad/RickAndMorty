@@ -1,15 +1,33 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from 'react';
 
 export const useFetchContent = () => {
-  const [imgList, setImgList] = useState([]);
-  const fetch = useCallback(async () => {
-    /* TODO: fetch images from this url: https://rickandmortyapi.com/api/character/
-      (to fetch with name add name in search query: https://rickandmortyapi.com/api/character/?name=rick)
-    */
-    setImgList([]);
-  }, []);
+    const valueRef = useRef();
+    const [imgList, setImgList] = useState([]);
 
-  // TODO: Put fetchMore method here
+    const fetchData = useCallback(async (value) => {
+        valueRef.current = value;
+        const currentURL = !valueRef.current
+            ? process.env.REACT_APP_SEARCH_URL
+            : `${process.env.REACT_APP_SEARCH_URL}?name=${valueRef.current}`;
 
-  return [imgList, fetch];
+        await fetch(currentURL)
+            .then((res) => res.json())
+            .then((res) => {
+                setImgList(res.results.splice(0, 10));
+            });
+    }, []);
+
+    const fetchMoreData = useCallback(async () => {
+        const currentURL = !valueRef.current
+            ? process.env.REACT_APP_SEARCH_URL
+            : `${process.env.REACT_APP_SEARCH_URL}?name=${valueRef.current}`;
+
+        await fetch(currentURL)
+            .then((res) => res.json())
+            .then((res) => {
+                setImgList(res.results);
+            });
+    }, []);
+
+    return [fetchData, fetchMoreData, imgList];
 };

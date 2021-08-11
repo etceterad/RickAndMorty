@@ -1,0 +1,12 @@
+ul.Content-list {
+    margin: 0 40px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-gap: 40px;
+}
+
+ul.Content-list li.Content-list__item img {
+    width: 100%;
+}
